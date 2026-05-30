@@ -596,24 +596,29 @@
 
   /* ── RESPONSIVE ───────────────────────────────────── */
   @media (max-width: 900px) {
+    #expanded-wrap {
+      align-items: flex-start; /* Prevents top clipping */
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 80px 0 60px 0; /* Space for the close button */
+    }
+    #expanded-wrap::-webkit-scrollbar {
+      width: 6px;
+    }
+    #expanded-wrap::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.1);
+    }
+    #expanded-wrap::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.3);
+      border-radius: 3px;
+    }
     #packaging {
       flex-direction: column;
       width: 360px;
       max-width: 90vw;
-      max-height: 85vh;
-      overflow-y: auto;
-      overflow-x: hidden;
+      max-height: none; /* Let it grow completely */
+      margin: 0 auto;
       transform: scale(0.8) translateY(30px);
-    }
-    #packaging::-webkit-scrollbar {
-      width: 6px;
-    }
-    #packaging::-webkit-scrollbar-track {
-      background: rgba(0,0,0,0.1);
-    }
-    #packaging::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.3);
-      border-radius: 3px;
     }
     #expanded-wrap.open #packaging {
       transform: scale(1) translateY(0);
@@ -667,7 +672,6 @@
   @media (max-width: 340px) {
     #stage { transform: scale(0.75); }
     #packaging { width: 280px; }
-    }
   }
 </style>
 </head>
