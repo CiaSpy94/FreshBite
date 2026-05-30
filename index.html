@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fresh Bite – Chicken Pasta Salad</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #E07B20;
+    --dark-brown: #1a1008;
+    --green: #2E6B3E;
+    --gold: #F5C842;
+    --cream: #FDF6EC;
+    --light-orange: #F2994A;
+    --text-dark: #1a1008;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #111;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, #1a0d00 0%, #0a0a0a 60%);
+    z-index: 0;
+  }
+
+  /* ── STAGE ─────────────────────────────────────────── */
+  #stage {
+    position: relative;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── ROUND LABEL (closed state) ─────────────────────── */
+  #round-label {
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: var(--green);
+    border: 6px solid #fff;
+    box-shadow: 0 0 0 3px var(--green), 0 30px 80px rgba(0,0,0,0.7), 0 0 60px rgba(46,107,62,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  #round-label:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 3px var(--green), 0 40px 100px rgba(0,0,0,0.8), 0 0 80px rgba(46,107,62,0.5);
+  }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  #round-label:hover { animation: none; }
+
+  /* curved text around circle */
+  .curved-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0; left: 0;
+  }
+
+  .curved-text textPath {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    fill: #fff;
+  }
+
+  .round-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+    z-index: 2;
+  }
+
+  .round-bowl {
+    font-size: 52px;
+    margin-bottom: 4px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+  }
+
+  .round-ready {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #c8e6c9;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .round-weight {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .round-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 22px;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+
+  .round-salad {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .round-logo {
+    width: 38px;
+    height: 38px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .click-hint {
+    position: absolute;
+    bottom: -44px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.4);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 0.4; }
+    50% { opacity: 0.9; }
+  }
+
+  /* ── EXPANDED PACKAGING ─────────────────────────────── */
+  #expanded-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,8,5,0.0);
+    opacity: 0;
+    pointer-events: none;
+    transition: background 0.5s ease, opacity 0.5s ease;
+  }
+
+  #expanded-wrap.open {
+    opacity: 1;
+    pointer-events: all;
+    background: rgba(10,8,5,0.92);
+  }
+
+  #packaging {
+    display: flex;
+    align-items: stretch;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.9);
+    transform: scale(0.4) rotate(-8deg);
+    opacity: 0;
+    transition: transform 0.6s cubic-bezier(0.34,1.3,0.64,1), opacity 0.5s ease;
+    max-width: 95vw;
+    max-height: 90vh;
+  }
+
+  #expanded-wrap.open #packaging {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+
+  /* ── PANEL 1 – Front ─────────────────────────────── */
+  .panel {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .p1 {
+    width: 220px;
+    background: var(--dark-brown);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px;
+  }
+
+  .p1-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .p1-logo-circle {
+    width: 36px; height: 36px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 7px; font-weight: 800; color: #fff;
+    text-align: center; line-height: 1.1;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+  }
+
+  .p1-brand { font-size: 9px; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+
+  .p1-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .p1-badge {
+    background: var(--orange);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+
+  .p1-img {
+    width: 130px;
+    height: 100px;
+    background: linear-gradient(135deg, #3a2010, #5a3015);
+    border-radius: 8px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+
+  .p1-claims {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .p1-claim {
+    font-size: 8.5px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
+
+  .p1-claim strong { color: #fff; font-weight: 700; }
+
+  .p1-weight {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-top: 12px;
+  }
+
+  /* decorative arrows */
+  .p1-arrows {
+    position: absolute;
+    right: 10px; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+
+  .arrow-tri {
+    width: 0; height: 0;
+    border-left: 8px solid var(--orange);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+
+  /* ── PANEL 2 – Description ───────────────────────── */
+  .p2 {
+    width: 240px;
+    background: var(--orange);
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--dark-brown);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .section-body {
+    font-size: 7.8px;
+    line-height: 1.6;
+    color: var(--dark-brown);
+    font-weight: 400;
+  }
+
+  .ingredients-box {
+    background: rgba(0,0,0,0.12);
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .advice-box { padding-top: 4px; }
+
+  .allergen-box {
+    background: #fff3;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-top: auto;
+  }
+
+  .allergen-title {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--dark-brown);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .p2-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .p2-logo-small {
+    width: 28px; height: 28px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 6px; font-weight: 800; color: #fff;
+    text-align: center; line-height: 1.1; flex-shrink: 0;
+  }
+
+  .p2-address { font-size: 7px; color: var(--dark-brown); line-height: 1.5; font-weight: 500; }
+
+  /* ── PANEL 3 – Nutrition ─────────────────────────── */
+  .p3 {
+    width: 200px;
+    background: var(--orange);
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    border-left: 2px solid rgba(0,0,0,0.15);
+  }
+
+  .nutrition-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--dark-brown);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .nut-header {
+    display: grid;
+    grid-template-columns: 1fr 70px 70px;
+    gap: 2px;
+    font-size: 7px;
+    font-weight: 700;
+    color: var(--dark-brown);
+    border-bottom: 1.5px solid var(--dark-brown);
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    text-align: right;
+  }
+
+  .nut-header span:first-child { text-align: left; }
+
+  .nut-row {
+    display: grid;
+    grid-template-columns: 1fr 70px 70px;
+    gap: 2px;
+    font-size: 7.5px;
+    color: var(--dark-brown);
+    padding: 2.5px 0;
+    border-bottom: 0.5px solid rgba(0,0,0,0.15);
+    align-items: center;
+  }
+
+  .nut-row span { text-align: right; }
+  .nut-row span:first-child { text-align: left; font-weight: 500; }
+  .nut-row.sub span:first-child { padding-left: 10px; font-weight: 400; font-size: 7px; }
+
+  .nut-serving {
+    font-size: 7px;
+    color: var(--dark-brown);
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+
+  .p3-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .p3-logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .barcode {
+    width: 100%;
+    height: 40px;
+    background: repeating-linear-gradient(
+      90deg,
+      #000 0px, #000 2px,
+      transparent 2px, transparent 3px,
+      #000 3px, #000 4px,
+      transparent 4px, transparent 6px,
+      #000 6px, #000 7px,
+      transparent 7px, transparent 9px,
+      #000 9px, #000 10px,
+      transparent 10px, transparent 12px,
+      #000 12px, #000 14px,
+      transparent 14px, transparent 15px
+    );
+    border-radius: 2px;
+    margin-top: 4px;
+  }
+
+  .use-by-box {
+    border: 1.5px solid var(--dark-brown);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 7px;
+    font-weight: 700;
+    color: var(--dark-brown);
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── CLOSE BUTTON ────────────────────────────────── */
+  #close-btn {
+    position: fixed;
+    top: 20px; right: 24px;
+    z-index: 200;
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: #fff;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+    backdrop-filter: blur(6px);
+  }
+
+  #close-btn:hover { background: rgba(255,255,255,0.2); transform: rotate(90deg); }
+
+  #expanded-wrap.open ~ #close-btn,
+  #close-btn.visible { display: flex; }
+
+  /* ── BOTTOM ROUND LID ─────────────────────────────── */
+  .p0 {
+    width: 180px;
+    min-height: 460px;
+    background: var(--green);
+    border-radius: 0 0 90px 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px 32px;
+    position: relative;
+    overflow: hidden;
+    border-right: 2px solid rgba(0,0,0,0.2);
+    flex-shrink: 0;
+  }
+
+  .lid-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 4px dashed rgba(255,255,255,0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .lid-brand {
+    font-family: 'Dancing Script', cursive;
+    font-size: 17px;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+
+  .lid-salad {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .lid-fresh {
+    font-size: 7px;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .lid-dots {
+    display: flex; gap: 4px; margin-top: 8px;
+  }
+
+  .lid-dot {
+    width: 5px; height: 5px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  .lid-weight {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+
+  /* ── RESPONSIVE ───────────────────────────────────── */
+  @media (max-width: 900px) {
+    #packaging {
+      transform: scale(0.3) rotate(-8deg);
+    }
+    #expanded-wrap.open #packaging {
+      transform: scale(0.72) rotate(0deg);
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <!-- Round label (closed) -->
+  <div id="round-label" onclick="openPackaging()">
+    <svg class="curved-text" viewBox="0 0 320 320">
+      <defs>
+        <path id="top-arc" d="M 30,160 A 130,130 0 0,1 290,160"/>
+        <path id="bot-arc" d="M 35,175 A 125,125 0 0,0 285,175"/>
+      </defs>
+      <text>
+        <textPath href="#top-arc">NATURALLY FRESH AND SIMPLY DELICIOUS &nbsp;&nbsp;</textPath>
+      </text>
+      <text>
+        <textPath href="#bot-arc">NO ARTIFICIAL COLOURS OR FLAVOURS &nbsp;&nbsp;</textPath>
+      </text>
+    </svg>
+
+    <div class="round-center">
+      <div class="round-bowl">🥗</div>
+      <div class="round-ready">Ready to Eat</div>
+      <div class="round-weight">250g</div>
+      <div class="round-title">Freshbite Chicken<br>pasta</div>
+      <div class="round-salad">SALAD</div>
+      <div class="round-logo">FRESH<br>BITE</div>
+    </div>
+
+    <div class="click-hint">tap to open ↗</div>
+  </div>
+</div>
+
+<!-- Expanded packaging overlay -->
+<div id="expanded-wrap" onclick="handleOverlayClick(event)">
+  <div id="packaging">
+
+    <!-- Lid panel -->
+    <div class="panel p0">
+      <div class="lid-circle">
+        <div class="round-logo" style="width:36px;height:36px;font-size:8px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;margin-bottom:6px;">FRESH<br>BITE</div>
+        <div class="lid-brand">Freshbite Chicken<br>pasta</div>
+        <div class="lid-salad">SALAD</div>
+      </div>
+      <div class="lid-fresh">USE BY:</div>
+      <div class="lid-dots"><div class="lid-dot"></div><div class="lid-dot"></div><div class="lid-dot"></div></div>
+      <div class="lid-weight">250g</div>
+    </div>
+
+    <!-- Panel 1: Front face -->
+    <div class="panel p1">
+      <div class="p1-logo">
+        <div class="p1-logo-circle">FRESH<br>BITE</div>
+        <div class="p1-brand">Fresh Bite<br>Premium Foods</div>
+      </div>
+
+      <div class="p1-title">Fresh Bite<br>Chicken Pasta<br>Salad</div>
+
+      <div class="p1-badge">Naturally Fresh Simply Delicious</div>
+
+      <div class="p1-img">🥗</div>
+
+      <div class="p1-claims">
+        <div class="p1-claim"><strong>No</strong> Artificial Colours Or Flavours</div>
+        <div class="p1-claim">✦ Ready To Eat</div>
+        <div class="p1-weight">250 g</div>
+        <div class="p1-claim" style="margin-top:6px;">Use By:</div>
+      </div>
+
+      <div class="p1-arrows">
+        <div class="arrow-tri"></div>
+        <div class="arrow-tri"></div>
+        <div class="arrow-tri"></div>
+      </div>
+    </div>
+
+    <!-- Panel 2: Description + Ingredients -->
+    <div class="panel p2">
+      <div>
+        <div class="section-title">Product Description</div>
+        <div class="section-body">Fresh Bite Chicken Pasta Salad is a ready-to-eat meal made with slow-roasted chicken breast, fan-shaped pasta, crisp greens, and a house Caesar dressing. Proudly Made in Australia from at least 90% Australian ingredients.</div>
+      </div>
+
+      <div class="ingredients-box">
+        <div class="section-title">Ingredients List</div>
+        <div class="section-body">Cooked Pasta (36%)(San Remo Trade No.26 Cooked Chicken Breast (18%), Lettuce Lemon Dressing, soybean (12%), Onion, Green Onion (10%), Salt, pepper, mix, sulphites, olive oil (2%), salt.</div>
+      </div>
+
+      <div class="advice-box">
+        <div class="section-title">Advice</div>
+        <div class="section-body">Keep refrigerated at or below 5°C.<br>Do not consume if packaging is damaged or seal is broken.<br>Once opened consume immediately.<br>Verify the date shown.</div>
+      </div>
+
+      <div class="allergen-box">
+        <div class="allergen-title">⚠ Allergen Warning</div>
+        <div class="section-body">Wheat, Egg, Soybean, Milk, Sulphites<br><strong>No Artificial Colours Or Flavours</strong></div>
+      </div>
+
+      <div class="p2-footer">
+        <div class="p2-logo-small">FRESH<br>BITE</div>
+        <div class="p2-address">
+          Fresh Bite Private Limited, Mb Northern<br>
+          804, Heidelberg West VIC 3081<br>
+          Contact: +91 481 116 664
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 3: Nutrition -->
+    <div class="panel p3">
+      <div class="nutrition-title">Nutrition Information Panel</div>
+
+      <div class="nut-serving">
+        Servings per package: 1<br>
+        Serving size: 250 g
+      </div>
+
+      <div class="nut-header">
+        <span></span>
+        <span>Per 250g</span>
+        <span>Per 100g</span>
+      </div>
+
+      <div class="nut-row"><span>Energy</span><span>550 kJ</span><span>207 kJ</span></div>
+      <div class="nut-row"><span>Protein</span><span>26.5 g</span><span>10.7 g</span></div>
+      <div class="nut-row"><span>Fat, Total</span><span>17.9 g</span><span>7.1 g</span></div>
+      <div class="nut-row sub"><span>– Saturated</span><span>4.9 g</span><span>1.96 g</span></div>
+      <div class="nut-row"><span>Carbohydrate</span><span>25.14 g</span><span>10 g</span></div>
+      <div class="nut-row sub"><span>– Sugars</span><span>3.4 g</span><span>1.4 g</span></div>
+      <div class="nut-row"><span>Dietary Fibre</span><span>1.5 g</span><span>0.6 g</span></div>
+      <div class="nut-row"><span>Sodium</span><span>912 mg</span><span>365 mg</span></div>
+      <div style="font-size:6.5px;color:var(--dark-brown);margin-top:4px;">Percentage Daily Intakes are based on an average adult diet of 8700 kJ</div>
+
+      <div class="p3-footer">
+        <div class="p3-logo">
+          <div class="p2-logo-small">FRESH<br>BITE</div>
+          <div style="font-size:7px;color:var(--dark-brown);font-weight:600;">Fresh Bite<br>Premium Foods</div>
+        </div>
+        <div class="use-by-box">Date of Manufacture: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>Use By: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>Batch No: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div class="barcode"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<button id="close-btn" onclick="closePackaging()">✕</button>
+
+<script>
+  function openPackaging() {
+    document.getElementById('expanded-wrap').classList.add('open');
+    document.getElementById('close-btn').classList.add('visible');
+    document.getElementById('round-label').style.pointerEvents = 'none';
+  }
+
+  function closePackaging() {
+    document.getElementById('expanded-wrap').classList.remove('open');
+    document.getElementById('close-btn').classList.remove('visible');
+    setTimeout(() => {
+      document.getElementById('round-label').style.pointerEvents = '';
+    }, 500);
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('expanded-wrap')) {
+      closePackaging();
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closePackaging();
+  });
+</script>
+</body>
+</html>
